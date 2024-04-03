@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
+    rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" 
+    crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class="bg-light" style="height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center" >
+        <div class="rounded bg-white p-5">
+            <h1 class="text-center">Registration Form</h1>
+            <form onsubmit="sendData(event)">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text"
+                    class="form-control" 
+                    id="name" 
+                    aria-describedby="emailHelp">
+                </div>
+                <label for="email" class="form-label">Email</label>
+                <input type="email"
+                class="form-control" 
+                id="email" 
+                aria-describedby="emailHelp">
+                <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <div class="form-check">
+                        <input class="form-check-input"
+                        type="radio" 
+                        name="gender" 
+                        id="flexRadioDefault1" 
+                        value="male" 
+                        checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Male
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input"
+                        type="radio" 
+                        name="gender" 
+                        id="flexRadioDefault2"
+                        value="female">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Female
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">Status
+                    <select class="form-select" aria-label="Default select example" id="status">
+                        <option selected>Select Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                    </symbol>
+                </svg>
+                <div id="message" class="alert" role="alert" style="display: none;"></div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+<script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+     crossorigin="anonymous">
+</script>
+    
+
+<script>
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    let selectedGender = document.querySelector('input[name="gender"]:checked').value;
+    let status = document.getElementById('status').value;
+
+    document.querySelectorAll('input[name="gender"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            selectedGender = document.querySelector('input[name="gender"]:checked').value;
+            console.log('Gender yang dipilih: ' + selectedGender);
+        });
+    });
+
+    document.getElementById('status').addEventListener('change', function () {
+        status = document.getElementById('status').value;
+        console.log('Nilai Status:', status);
+    });
+
+    function sendData(event) {
+        event.preventDefault(); 
+
+        const url = 'https://gorest.co.in/public/v2/users';
+        const data = {
+            name: nameInput.value,
+            email: emailInput.value,
+            gender: selectedGender,
+            status: status,
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer 7181a0435992cedd1c467477c109e0fabdf5bae03ba4c7fa7223a3a129743ef0',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((responseData) => {
+                const messageElement = document.getElementById('message');
+                messageElement.textContent = ' submitted successfully!';
+                messageElement.classList.add('alert-success');
+                messageElement.style.display = 'block';
+                console.log('Response data:', responseData);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                const messageElement = document.getElementById('message');
+                messageElement.textContent = 'Error submitting form. Please try again later.';
+                messageElement.classList.add('alert-danger');
+                messageElement.style.display = 'block';
+            });
+    }
+</script>
+</body>
+</html>
